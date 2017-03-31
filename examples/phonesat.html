@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>PhoneSat</title>
+
+	<link href="phonesat.css" rel="stylesheet" type="text/css"/>
+	<link href="http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700" rel="stylesheet" type="text/css"/>
+
+	<!-- leafletjs for map display -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@0.7.7/dist/leaflet.css" />
+</head>
+<body>
+	<div id="map"></div>
+	<div id='next_passes_window' class="window">
+		<h1>Next passes</h1>
+		<table id='next_passes'>
+			<tr>
+				<th>Sat</th>
+				<th>AOS</th>
+				<th>Max El</th>
+			</tr>
+		</table>
+		<a id="ical" download="phonesat.ics" >Import in Outlook or iCalendar</a>
+	</div>
+	<div id="polar_window" class="window">
+		<h1>Azimuth and elevation</h1>
+		<svg
+			xmlns="http://www.w3.org/2000/svg" version="1.1"
+			id="polar"
+			width="300px" height="300px"
+			viewBox="-110 -110 220 220"
+			overflow="hidden">
+			<path
+				fill="none" stroke="black" stroke-width="1"
+				d="M 0 -95 v 190 M -95 0 h 190"
+				/>
+			<circle
+				fill="none" stroke="black"
+				cx="0" cy="0" r="30"
+				/>
+			<circle
+				fill="none" stroke="black"
+				cx="0" cy="0" r="60"
+				/>
+			<circle
+				fill="none" stroke="black"
+				cx="0" cy="0" r="90"
+				/>
+			<text x="-4" y="-96" font-family="Verdana" font-size="10" fill="green">
+				N
+			</text>
+			<text x="-4" y="105" font-family="Verdana" font-size="10" fill="green">
+				S
+			</text>
+			<text x="96" y="4" font-family="Verdana" font-size="10" fill="green">
+				E
+			</text>
+			<text x="-106" y="4" font-family="Verdana" font-size="10" fill="green">
+				W
+			</text>
+		</svg>
+		<table>
+			<tr>
+				<th>Satellite:</th>
+				<td id="sat_name"></td>
+			</tr>
+			<tr>
+				<th>Azimuth:</th>
+				<td id="sat_az"></td>
+			</tr>
+			<tr>
+				<th>Elevation:</th>
+				<td id="sat_el"></td>
+			</tr>
+			<tr>
+				<th>Frequency (w/ Doppler):</th>
+				<td id="sat_freq"></td>
+			</tr>
+			<tr>
+				<th>Altitude:</th>
+				<td id="sat_alt"></td>
+			</tr>
+		</table>
+	</div>
+</body>
+</html>
+<script src="https://unpkg.com/leaflet@0.7.7/dist/leaflet.js"></script>
+<script type="text/javascript" src="../dist/gpredict.min.js"></script>
+<script>
+    // Default ground station
+    qth = new qth_t();
+    qth.lat=35.0232;
+    qth.lon=24.5819;
+    qth.alt=10;
+    
+    // Number of positions to compute
+    var COUNT = 300;
+    
+    // Interval in ms between positions to compute
+    var STEP = 60*1000;
+    
+    var SAT_CFG_INT_PRED_RESOLUTION = 10;
+    var SAT_CFG_INT_PRED_NUM_ENTRIES = 20;
+    var SAT_CFG_INT_PRED_MIN_EL = 5;
+    // Color saturation between 0 and 1
+    var SAT_CFG_COLOR_SATURATION = 0.7;
+    // Color value between 0 and 255
+    var SAT_CFG_COLOR_VALUE = 255;
+    
+    var SATELLITES = [
+    	// FUNCUBE-1 (AO-73)
+    	{
+    		id: 39444
+    	},
+    	// ISS
+    	{
+    		id: 25544,
+    		freq: 437.1
+    	}
+    ];
+</script>
+<script type="text/javascript" src="phonesat.js"></script>
+<script>
+// Create the map
+var map = L.map(
+		'map',
+		{
+			center: [qth.lat, qth.lon],
+			zoom: 4,
+			maxBounds: [[-90, -180], [90, 180]],
+			minZoom: 2,
+			zoomControl: false
+		}
+);
+
+// Add openstreetmap layer
+L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 18,
+    attribution: 'Map data &copy; OpenStreetMap contributors'
+}).addTo(map);
+
+// Add a scale
+L.control.scale({maxWidth: 500}).addTo(map);
+
+// Create the ground station marker
+var ground_station_marker = L.marker(
+		qth,
+		{
+			title: 'Ground station'
+		}
+);
+ground_station_marker.addTo(map);
+polar_window.style.visibility='visible';
+next_passes_window.style.visibility='visible';
+
+// Clicking on the moves the ground station
+map.on('click', function (e) {
+	// Verify input
+	if (e.latlng.lat < -85 ||
+		e.latlng.lat > 85 ||
+		e.latlng.lng < -180 ||
+		e.latlng.lng > 180)
+	{
+		// Illegal location
+		return;
+	}
+
+	ground_station_marker.setLatLng(e.latlng);
+
+	// Update tracking information
+	qth.lat = e.latlng.lat;
+	qth.lon = e.latlng.lng;
+	onGroundStationChanged();
+});
+
+// Add layer control button
+var layers_control = L.control.layers(
+	// base layers
+	{},
+	// overlays
+	{
+		'Ground Station': ground_station_marker
+	},
+	// options
+	{
+		//position: 'topright',
+		collapsed: false
+	}
+);
+layers_control.addTo(map);
+
+map.on('overlayadd', function(e) {
+	if (e.layer === ground_station_marker) {
+		polar_window.style.visibility='visible';
+		next_passes_window.style.visibility='visible';
+		map.setView(qth);
+	}
+});
+
+map.on('overlayremove', function(e) {
+	if (e.layer === ground_station_marker) {
+		polar_window.style.visibility='hidden';
+		next_passes_window.style.visibility='hidden';		
+	}
+});
+
+// Init satellites
+var sats = [];
+
+function parseTLE() {
+	// The TLE file has been downloaded from NORAD
+	// Convert the HTML page to a plain text
+	var re = /^[^]*<PRE>\n([^]*)<\/PRE>[^]*$/;
+	var tle = this.responseText.replace(re, "$1").split('\n');
+	// Construct a new satellite
+	var sat = new sat_t();
+	sat.freq = this.sat_freq;
+	// Load its orbit data from TLE
+	gtk_sat_data_read_sat(tle, sat);
+	// Set its color
+	sat.color = getSvgColor(sats.length * 360 / SATELLITES.length,
+			SAT_CFG_COLOR_SATURATION, SAT_CFG_COLOR_VALUE);
+	sat.mapInit(map);
+	sat.polarInit();
+	// Save it to the list
+	sats.push(sat);
+	// Initiate a first refresh
+	onGroundStationChanged();
+}
+
+SATELLITES.forEach(function(currentValue, index, array) {
+	var myRequest = new XMLHttpRequest();
+	myRequest.sat_freq = currentValue.freq;
+	myRequest.addEventListener('load', parseTLE);
+	myRequest.open("GET", "https://crossorigin.me/http://celestrak.com/cgi-bin/TLE.pl?CATNR=" + currentValue.id);
+	myRequest.send();
+});
+
+// Start timer
+window.setInterval("refresh()", 1000);
+
+</script>
