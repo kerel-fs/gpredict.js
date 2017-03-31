@@ -8,4 +8,4 @@ Example code at [`examples/phonesat.html`](examples/phonesat.html).
 
 ## License
 
-gpredict.js is licensed under GPL-2.0.
+gpredict.js is licensed under GNU General Public License v2.0 or later.

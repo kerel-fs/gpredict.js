@@ -8,7 +8,7 @@
     "ham-radio",
     "space"
   ],
-  "license": "GPL-2.0",
+  "license": "GPL-2.0+",
   "homepage": "",
   "devDependencies": {
     "gulp": "3.9",
