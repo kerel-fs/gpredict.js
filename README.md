@@ -4,7 +4,7 @@ A js-fork of [gpredict](https://github.com/csete/gpredict): a free, real-time sa
 
 ## Usage
 
-Example code at [`examples/phonesat.html`](examples/phonesat.html).
+Example code at [`examples/phonesat.html`](examples/phonesat.html) ([Preview](https://kerel-fs.github.io/gpredict.js/examples/phonesat.html)).
 
 ## License
 
