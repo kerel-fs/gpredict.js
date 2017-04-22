@@ -1,4 +1,5 @@
 # gpredict.js
+[![Build Status](https://travis-ci.org/kerel-fs/gpredict.js.svg?branch=master)](https://travis-ci.org/kerel-fs/gpredict.js)
 
 A js-fork of [gpredict](https://github.com/csete/gpredict): a free, real-time satellite tracking and orbit prediction software.
 
