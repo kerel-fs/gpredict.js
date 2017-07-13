@@ -36,7 +36,7 @@ function decayed(sat) {
  * @author John A. Magliacane, KD2BD
  * @author Alexandru Csete, OZ9AEC
  * 
- * @param {sat_t} sat Pointer to satellite data.
+ * @param {Sat_t} sat Pointer to satellite data.
  * @param {qth_t} qth
  * 
  * @return {number} true if the satellite will reach AOS, false otherwise.
@@ -203,7 +203,7 @@ function tle_t() {
  *
  * \bug It is uncertain whether the units are uniform across all functions.
  */
-function geodetic_t() {
+function Geodetic_t() {
 	this.lat = 0.0;    /*!< Lattitude [rad] */
 	this.lon = 0.0;    /*!< Longitude [rad] */
 	this.alt = 0.0;    /*!< Altitude [km]? */
@@ -288,7 +288,7 @@ function deep_static_t() {
  *  \ingroup sgpsdpif
  *
  */
-function sat_t() {
+function Sat_t() {
     this.name = "";
     this.nickname = "";
     this.website = "";
@@ -1519,15 +1519,15 @@ function pass_detail_t() {
 /**
  * SGP4SDP4 driver for doing AOS/LOS calculations.
  *
- * @param {sat_t} sat Pointer to the satellite data.
+ * @param {Sat_t} sat Pointer to the satellite data.
  * @param {qth_t} qth Pointer to the QTH data.
  * @param {number} t The time for calculation (Julian Date)
  */
 function predict_calc(sat, qth, t)
 {
 	var obs_set = new obs_set_t();
-    var sat_geodetic = new geodetic_t();
-    var obs_geodetic = new geodetic_t();
+    var sat_geodetic = new Geodetic_t();
+    var obs_geodetic = new Geodetic_t();
     var age = 0.0;
 
     obs_geodetic.lon = qth.lon * de2ra;
@@ -1558,16 +1558,16 @@ function predict_calc(sat, qth, t)
     while (sat_geodetic.lon > (pi))
         sat_geodetic.lon -= twopi;
 
-    sat.az = Degrees (obs_set.az);
-    sat.el = Degrees (obs_set.el);
+    sat.az = degrees (obs_set.az);
+    sat.el = degrees (obs_set.el);
     sat.range = obs_set.range;
     sat.range_rate = obs_set.range_rate;
-    sat.ssplat = Degrees (sat_geodetic.lat);
-    sat.ssplon = Degrees (sat_geodetic.lon);
+    sat.ssplat = degrees (sat_geodetic.lat);
+    sat.ssplon = degrees (sat_geodetic.lon);
     sat.alt = sat_geodetic.alt;
-    sat.ma = Degrees (sat.phase);
+    sat.ma = degrees (sat.phase);
     sat.ma *= 256.0/360.0;
-    sat.phase = Degrees (sat.phase);
+    sat.phase = degrees (sat.phase);
 
     /* same formulas, but the one from predict is nicer */
     //sat.footprint = 2.0 * xkmper * acos (xkmper/sat.pos.w);
@@ -1584,7 +1584,7 @@ function predict_calc(sat, qth, t)
  * @author Alexandru Csete, OZ9AEC
  * @author John A. Magliacane, KD2BD
  * 
- * @param {sat_t} sat Pointer to the satellite data.
+ * @param {Sat_t} sat Pointer to the satellite data.
  * @param {qth_t} qth Pointer to the QTH data.
  * @param {number} start The time where calculation should start.
  * @param {number} maxdt The upper time limit in days (0.0 = no limit)
@@ -1675,7 +1675,7 @@ function find_aos (sat, qth, start, maxdt)
  *
  * @author Alexandru Csete, OZ9AEC
  * @author John A. Magliacane, KD2BD
- * @param {sat_t} sat Pointer to the satellite data.
+ * @param {Sat_t} sat Pointer to the satellite data.
  * @param {qth_t} qth Pointer to the QTH data.
  * @param {number} start The time where calculation should start.
  * @param {number} maxdt The upper time limit in days (0.0 = no limit)
@@ -1758,7 +1758,7 @@ function find_los (sat, qth, start, maxdt)
 /**
  * Find AOS time of current pass.
  *
- * @param {sat_t} sat The satellite to find AOS for.
+ * @param {Sat_t} sat The satellite to find AOS for.
  * @param {qth_t} qth The ground station.
  * @param {number} start Start time, prefereably now.
  * @returns {number} The time of the previous AOS or 0.0 if the satellite has no AOS.
@@ -1794,7 +1794,7 @@ function find_prev_aos (sat, qth, start)
 /**
  * Predict upcoming passes starting now
  *
- * @param {sat_t} sat Pointer to the satellite data.
+ * @param {Sat_t} sat Pointer to the satellite data.
  * @param {qth_t} qth Pointer to the observer data.
  * @param {number} maxdt The maximum number of days to look ahead.
  * @param {number} num The number of passes to predict.
@@ -1812,7 +1812,7 @@ function get_next_passes (sat, qth, maxdt, num)
 {
     /* get the current time and call
         the get_pass function */
-    var now = Julian_Date(new Date());
+    var now = julian_date(new Date());
     return get_passes (sat, qth, now, maxdt, num);
 }
 
@@ -1820,7 +1820,7 @@ function get_next_passes (sat, qth, maxdt, num)
 /**
  * Predict first pass after a certain time.
  *
- * @param {sat_t} sat Pointer to the satellite data.
+ * @param {Sat_t} sat Pointer to the satellite data.
  * @param {qth_t} qth Pointer to the location data.
  * @param {number} start Starting time.
  * @param {number} maxdt The maximum number of days to look ahead (0 for no limit).
@@ -1995,7 +1995,7 @@ function get_pass(sat, qth, start, maxdt, pass)
 /**
  * Predict passes after a certain time.
  *
- * @param {sat_t} sat
+ * @param {Sat_t} sat
  * @param {qth_t} qth
  * @param {number} start
  * @param {number} maxdt
@@ -2066,7 +2066,7 @@ function get_passes (sat, qth, start, maxdt, num)
  * through 2056 December 31/2359 UTC are valid.
  * Version 1.60 modifies Calendar_Date to ensure date matches time
  * resolution and modifies Time_of_Day to make it more robust.
- * Version 2.00 adds Julian_Date, Date_Time, and Check_Date to support
+ * Version 2.00 adds julian_date, Date_Time, and Check_Date to support
  * checking for valid date/times, permitting the use of Time_to_UTC and
  * Time_from_UTC for UTC/local time conversions.
  * Version 2.05 modifies UTC_offset to allow non-integer offsets.
@@ -2074,14 +2074,14 @@ function get_passes (sat, qth, start, maxdt, num)
  *   Ported to C by: Neoklis Kyriazis  April 9  2001
  */
 
-/* The function Julian_Date_of_Epoch returns the Julian Date of     */
+/* The function julian_date_of_Epoch returns the Julian Date of     */
 /* an epoch specified in the format used in the NORAD two-line      */
 /* element sets. It has been modified to support dates beyond       */
 /* the year 1999 assuming that two-digit years in the range 00-56   */
 /* correspond to 2000-2056. Until the two-line element set format   */
 /* is changed, it is only valid for dates through 2056 December 31. */
 
-function Julian_Date_of_Epoch(epoch) {
+function julian_date_of_Epoch(epoch) {
 	var year, day;
 
 	year = Int(epoch * 1E-3);
@@ -2092,7 +2092,7 @@ function Julian_Date_of_Epoch(epoch) {
 	else
 		year = year + 1900;
 
-	return (Julian_Date_of_Year(year) + day);
+	return (julian_date_of_Year(year) + day);
 }
 
 
@@ -2206,13 +2206,13 @@ function Time_of_Day(jd, cdate) {
 
 /*------------------------------------------------------------------*/
 
-/* The function Julian_Date converts a standard calendar   */
+/* The function julian_date converts a standard calendar   */
 /* date and time (FIXME: GMT?) to a Julian Date. The procedure Date_Time */
 /* performs the inverse of this function. */
-function Julian_Date(cdate) {
+function julian_date(cdate) {
 	var julian_date;
 
-	julian_date = Julian_Date_of_Year(cdate.getUTCFullYear())
+	julian_date = julian_date_of_Year(cdate.getUTCFullYear())
 			+ DOY(cdate.getUTCFullYear(), cdate.getUTCMonth() + 1, cdate
 					.getUTCDate())
 			+ Fraction_of_Day(cdate.getUTCHours(), cdate.getUTCMinutes(), cdate
@@ -2228,7 +2228,7 @@ function Julian_Date(cdate) {
  *
  *  The function Date_Time() converts a Julian Date to
  *  standard calendar date and time (GMT). The function
- *  Julian_Date() performs the inverse of this function.
+ *  julian_date() performs the inverse of this function.
  */
 
 function Date_Time(julian_date) {
@@ -2249,7 +2249,7 @@ Check_Date(struct tm *cdate)
   double jt;
   struct tm chkdate;
 
-  jt = Julian_Date(cdate);
+  jt = julian_date(cdate);
   Date_Time(jt, &chkdate);
 
   if( (cdate->tm_year == chkdate.tm_year) &&
@@ -2310,12 +2310,12 @@ function Delta_ET(year) {
 
 /*------------------------------------------------------------------*/
 
-/* The function Julian_Date_of_Year calculates the Julian Date  */
+/* The function julian_date_of_Year calculates the Julian Date  */
 /* of Day 0.0 of {year}. This function is used to calculate the */
-/* Julian Date of any date by using Julian_Date_of_Year, DOY,   */
+/* Julian Date of any date by using julian_date_of_Year, DOY,   */
 /* and Fraction_of_Day. */
 
-function Julian_Date_of_Year(year) {
+function julian_date_of_Year(year) {
 	var A, B, i;
 	var jdoy;
 
@@ -2353,7 +2353,7 @@ function ThetaG(epoch, deep_arg) {
 
 	UT = Frac(day);
 	day = Int(day);
-	jd = Julian_Date_of_Year(year) + day;
+	jd = julian_date_of_Year(year) + day;
 	TU = (jd - 2451545.0) / 36525;
 	GMST = 24110.54841 + TU * (8640184.812866 + TU * (0.093104 - TU * 6.2E-6));
 	GMST = Modulus(GMST + secday * omega_E * UT, secday);
@@ -2571,7 +2571,7 @@ var atan = Math.atan;
 
 /** \brief Read TLE data for a given satellite into memory.
  *  \param catnum The catalog number of the satellite.
- *  \param sat Pointer to a valid sat_t structure.
+ *  \param sat Pointer to a valid Sat_t structure.
  *  \return 0 if successfull, 1 if an I/O error occurred,
  *          2 if the TLE data appears to be bad.
  *
@@ -2616,10 +2616,10 @@ function gtk_sat_data_read_sat(rawtle, sat) {
  * The function is called automatically by gtk_sat_data_read_sat.
  */
 function gtk_sat_data_init_sat(sat) {
-	var sat_geodetic = new geodetic_t();
+	var sat_geodetic = new Geodetic_t();
 	var jul_utc, age;
 
-	jul_utc = Julian_Date_of_Epoch(sat.tle.epoch); // => tsince = 0.0
+	jul_utc = julian_date_of_Epoch(sat.tle.epoch); // => tsince = 0.0
 	sat.jul_epoch = jul_utc;
 
 	/* execute computations */
@@ -2642,10 +2642,10 @@ function gtk_sat_data_init_sat(sat) {
 	while (sat_geodetic.lon > (pi))
 		sat_geodetic.lon -= twopi;
 
-	sat.ssplat = Degrees(sat_geodetic.lat);
-	sat.ssplon = Degrees(sat_geodetic.lon);
+	sat.ssplat = degrees(sat_geodetic.lat);
+	sat.ssplon = degrees(sat_geodetic.lon);
 	sat.alt = sat_geodetic.alt;
-	sat.ma = Degrees(sat.phase);
+	sat.ma = degrees(sat.phase);
 	sat.ma *= 256.0 / 360.0;
 	sat.footprint = 2.0 * xkmper * acos(xkmper / sat.pos.w);
 	age = 0.0;
@@ -2710,18 +2710,18 @@ function Cube(arg)
 /*------------------------------------------------------------------*/
 
 /* Returns angle in radians from arg id degrees */
-function Radians(arg)
+function radians(arg)
 {
   return( arg*de2ra );
-} /*Function Radians*/
+} /*Function radians*/
 
 /*------------------------------------------------------------------*/
 
 /* Returns angle in degrees from arg in rads */
-function Degrees(arg)
+function degrees(arg)
 {
   return( arg/de2ra );
-} /*Function Degrees*/
+} /*Function degrees*/
 
 /*------------------------------------------------------------------*/
 
