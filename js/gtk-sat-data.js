@@ -46,7 +46,7 @@ function gtk_sat_data_read_sat(rawtle, sat) {
  * The function is called automatically by gtk_sat_data_read_sat.
  */
 function gtk_sat_data_init_sat(sat) {
-	var sat_geodetic = new geodetic_t();
+	var sat_geodetic = new Geodetic_t();
 	var jul_utc, age;
 
 	jul_utc = julian_date_of_Epoch(sat.tle.epoch); // => tsince = 0.0

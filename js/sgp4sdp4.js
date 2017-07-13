@@ -61,7 +61,7 @@ function tle_t() {
  *
  * \bug It is uncertain whether the units are uniform across all functions.
  */
-function geodetic_t() {
+function Geodetic_t() {
 	this.lat = 0.0;    /*!< Lattitude [rad] */
 	this.lon = 0.0;    /*!< Longitude [rad] */
 	this.alt = 0.0;    /*!< Altitude [km]? */

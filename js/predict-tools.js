@@ -88,8 +88,8 @@ function pass_detail_t() {
 function predict_calc(sat, qth, t)
 {
 	var obs_set = new obs_set_t();
-    var sat_geodetic = new geodetic_t();
-    var obs_geodetic = new geodetic_t();
+    var sat_geodetic = new Geodetic_t();
+    var obs_geodetic = new Geodetic_t();
     var age = 0.0;
 
     obs_geodetic.lon = qth.lon * de2ra;
