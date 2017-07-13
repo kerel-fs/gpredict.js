@@ -36,7 +36,7 @@ function decayed(sat) {
  * @author John A. Magliacane, KD2BD
  * @author Alexandru Csete, OZ9AEC
  * 
- * @param {sat_t} sat Pointer to satellite data.
+ * @param {Sat_t} sat Pointer to satellite data.
  * @param {qth_t} qth
  * 
  * @return {number} true if the satellite will reach AOS, false otherwise.

@@ -146,7 +146,7 @@ function deep_static_t() {
  *  \ingroup sgpsdpif
  *
  */
-function sat_t() {
+function Sat_t() {
     this.name = "";
     this.nickname = "";
     this.website = "";

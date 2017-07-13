@@ -81,7 +81,7 @@ function pass_detail_t() {
 /**
  * SGP4SDP4 driver for doing AOS/LOS calculations.
  *
- * @param {sat_t} sat Pointer to the satellite data.
+ * @param {Sat_t} sat Pointer to the satellite data.
  * @param {qth_t} qth Pointer to the QTH data.
  * @param {number} t The time for calculation (Julian Date)
  */
@@ -146,7 +146,7 @@ function predict_calc(sat, qth, t)
  * @author Alexandru Csete, OZ9AEC
  * @author John A. Magliacane, KD2BD
  * 
- * @param {sat_t} sat Pointer to the satellite data.
+ * @param {Sat_t} sat Pointer to the satellite data.
  * @param {qth_t} qth Pointer to the QTH data.
  * @param {number} start The time where calculation should start.
  * @param {number} maxdt The upper time limit in days (0.0 = no limit)
@@ -237,7 +237,7 @@ function find_aos (sat, qth, start, maxdt)
  *
  * @author Alexandru Csete, OZ9AEC
  * @author John A. Magliacane, KD2BD
- * @param {sat_t} sat Pointer to the satellite data.
+ * @param {Sat_t} sat Pointer to the satellite data.
  * @param {qth_t} qth Pointer to the QTH data.
  * @param {number} start The time where calculation should start.
  * @param {number} maxdt The upper time limit in days (0.0 = no limit)
@@ -320,7 +320,7 @@ function find_los (sat, qth, start, maxdt)
 /**
  * Find AOS time of current pass.
  *
- * @param {sat_t} sat The satellite to find AOS for.
+ * @param {Sat_t} sat The satellite to find AOS for.
  * @param {qth_t} qth The ground station.
  * @param {number} start Start time, prefereably now.
  * @returns {number} The time of the previous AOS or 0.0 if the satellite has no AOS.
@@ -356,7 +356,7 @@ function find_prev_aos (sat, qth, start)
 /**
  * Predict upcoming passes starting now
  *
- * @param {sat_t} sat Pointer to the satellite data.
+ * @param {Sat_t} sat Pointer to the satellite data.
  * @param {qth_t} qth Pointer to the observer data.
  * @param {number} maxdt The maximum number of days to look ahead.
  * @param {number} num The number of passes to predict.
@@ -382,7 +382,7 @@ function get_next_passes (sat, qth, maxdt, num)
 /**
  * Predict first pass after a certain time.
  *
- * @param {sat_t} sat Pointer to the satellite data.
+ * @param {Sat_t} sat Pointer to the satellite data.
  * @param {qth_t} qth Pointer to the location data.
  * @param {number} start Starting time.
  * @param {number} maxdt The maximum number of days to look ahead (0 for no limit).
@@ -557,7 +557,7 @@ function get_pass(sat, qth, start, maxdt, pass)
 /**
  * Predict passes after a certain time.
  *
- * @param {sat_t} sat
+ * @param {Sat_t} sat
  * @param {qth_t} qth
  * @param {number} start
  * @param {number} maxdt

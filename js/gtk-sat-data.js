@@ -1,7 +1,7 @@
 
 /** \brief Read TLE data for a given satellite into memory.
  *  \param catnum The catalog number of the satellite.
- *  \param sat Pointer to a valid sat_t structure.
+ *  \param sat Pointer to a valid Sat_t structure.
  *  \return 0 if successfull, 1 if an I/O error occurred,
  *          2 if the TLE data appears to be bad.
  *
