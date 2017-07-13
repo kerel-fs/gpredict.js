@@ -39,10 +39,10 @@ function Cube(arg)
 /*------------------------------------------------------------------*/
 
 /* Returns angle in radians from arg id degrees */
-function Radians(arg)
+function radians(arg)
 {
   return( arg*de2ra );
-} /*Function Radians*/
+} /*Function radians*/
 
 /*------------------------------------------------------------------*/
 
