@@ -47,10 +47,10 @@ function radians(arg)
 /*------------------------------------------------------------------*/
 
 /* Returns angle in degrees from arg in rads */
-function Degrees(arg)
+function degrees(arg)
 {
   return( arg/de2ra );
-} /*Function Degrees*/
+} /*Function degrees*/
 
 /*------------------------------------------------------------------*/
 

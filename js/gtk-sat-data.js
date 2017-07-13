@@ -72,10 +72,10 @@ function gtk_sat_data_init_sat(sat) {
 	while (sat_geodetic.lon > (pi))
 		sat_geodetic.lon -= twopi;
 
-	sat.ssplat = Degrees(sat_geodetic.lat);
-	sat.ssplon = Degrees(sat_geodetic.lon);
+	sat.ssplat = degrees(sat_geodetic.lat);
+	sat.ssplon = degrees(sat_geodetic.lon);
 	sat.alt = sat_geodetic.alt;
-	sat.ma = Degrees(sat.phase);
+	sat.ma = degrees(sat.phase);
 	sat.ma *= 256.0 / 360.0;
 	sat.footprint = 2.0 * xkmper * acos(xkmper / sat.pos.w);
 	age = 0.0;

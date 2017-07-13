@@ -120,16 +120,16 @@ function predict_calc(sat, qth, t)
     while (sat_geodetic.lon > (pi))
         sat_geodetic.lon -= twopi;
 
-    sat.az = Degrees (obs_set.az);
-    sat.el = Degrees (obs_set.el);
+    sat.az = degrees (obs_set.az);
+    sat.el = degrees (obs_set.el);
     sat.range = obs_set.range;
     sat.range_rate = obs_set.range_rate;
-    sat.ssplat = Degrees (sat_geodetic.lat);
-    sat.ssplon = Degrees (sat_geodetic.lon);
+    sat.ssplat = degrees (sat_geodetic.lat);
+    sat.ssplon = degrees (sat_geodetic.lon);
     sat.alt = sat_geodetic.alt;
-    sat.ma = Degrees (sat.phase);
+    sat.ma = degrees (sat.phase);
     sat.ma *= 256.0/360.0;
-    sat.phase = Degrees (sat.phase);
+    sat.phase = degrees (sat.phase);
 
     /* same formulas, but the one from predict is nicer */
     //sat.footprint = 2.0 * xkmper * acos (xkmper/sat.pos.w);
