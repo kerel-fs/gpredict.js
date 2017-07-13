@@ -11,7 +11,7 @@
  * through 2056 December 31/2359 UTC are valid.
  * Version 1.60 modifies Calendar_Date to ensure date matches time
  * resolution and modifies Time_of_Day to make it more robust.
- * Version 2.00 adds Julian_Date, Date_Time, and Check_Date to support
+ * Version 2.00 adds julian_date, Date_Time, and Check_Date to support
  * checking for valid date/times, permitting the use of Time_to_UTC and
  * Time_from_UTC for UTC/local time conversions.
  * Version 2.05 modifies UTC_offset to allow non-integer offsets.
@@ -19,14 +19,14 @@
  *   Ported to C by: Neoklis Kyriazis  April 9  2001
  */
 
-/* The function Julian_Date_of_Epoch returns the Julian Date of     */
+/* The function julian_date_of_Epoch returns the Julian Date of     */
 /* an epoch specified in the format used in the NORAD two-line      */
 /* element sets. It has been modified to support dates beyond       */
 /* the year 1999 assuming that two-digit years in the range 00-56   */
 /* correspond to 2000-2056. Until the two-line element set format   */
 /* is changed, it is only valid for dates through 2056 December 31. */
 
-function Julian_Date_of_Epoch(epoch) {
+function julian_date_of_Epoch(epoch) {
 	var year, day;
 
 	year = Int(epoch * 1E-3);
@@ -37,7 +37,7 @@ function Julian_Date_of_Epoch(epoch) {
 	else
 		year = year + 1900;
 
-	return (Julian_Date_of_Year(year) + day);
+	return (julian_date_of_Year(year) + day);
 }
 
 
@@ -151,13 +151,13 @@ function Time_of_Day(jd, cdate) {
 
 /*------------------------------------------------------------------*/
 
-/* The function Julian_Date converts a standard calendar   */
+/* The function julian_date converts a standard calendar   */
 /* date and time (FIXME: GMT?) to a Julian Date. The procedure Date_Time */
 /* performs the inverse of this function. */
-function Julian_Date(cdate) {
+function julian_date(cdate) {
 	var julian_date;
 
-	julian_date = Julian_Date_of_Year(cdate.getUTCFullYear())
+	julian_date = julian_date_of_Year(cdate.getUTCFullYear())
 			+ DOY(cdate.getUTCFullYear(), cdate.getUTCMonth() + 1, cdate
 					.getUTCDate())
 			+ Fraction_of_Day(cdate.getUTCHours(), cdate.getUTCMinutes(), cdate
@@ -173,7 +173,7 @@ function Julian_Date(cdate) {
  *
  *  The function Date_Time() converts a Julian Date to
  *  standard calendar date and time (GMT). The function
- *  Julian_Date() performs the inverse of this function.
+ *  julian_date() performs the inverse of this function.
  */
 
 function Date_Time(julian_date) {
@@ -194,7 +194,7 @@ Check_Date(struct tm *cdate)
   double jt;
   struct tm chkdate;
 
-  jt = Julian_Date(cdate);
+  jt = julian_date(cdate);
   Date_Time(jt, &chkdate);
 
   if( (cdate->tm_year == chkdate.tm_year) &&
@@ -255,12 +255,12 @@ function Delta_ET(year) {
 
 /*------------------------------------------------------------------*/
 
-/* The function Julian_Date_of_Year calculates the Julian Date  */
+/* The function julian_date_of_Year calculates the Julian Date  */
 /* of Day 0.0 of {year}. This function is used to calculate the */
-/* Julian Date of any date by using Julian_Date_of_Year, DOY,   */
+/* Julian Date of any date by using julian_date_of_Year, DOY,   */
 /* and Fraction_of_Day. */
 
-function Julian_Date_of_Year(year) {
+function julian_date_of_Year(year) {
 	var A, B, i;
 	var jdoy;
 
@@ -298,7 +298,7 @@ function ThetaG(epoch, deep_arg) {
 
 	UT = Frac(day);
 	day = Int(day);
-	jd = Julian_Date_of_Year(year) + day;
+	jd = julian_date_of_Year(year) + day;
 	TU = (jd - 2451545.0) / 36525;
 	GMST = 24110.54841 + TU * (8640184.812866 + TU * (0.093104 - TU * 6.2E-6));
 	GMST = Modulus(GMST + secday * omega_E * UT, secday);

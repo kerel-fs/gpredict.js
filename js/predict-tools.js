@@ -374,7 +374,7 @@ function get_next_passes (sat, qth, maxdt, num)
 {
     /* get the current time and call
         the get_pass function */
-    var now = Julian_Date(new Date());
+    var now = julian_date(new Date());
     return get_passes (sat, qth, now, maxdt, num);
 }
 

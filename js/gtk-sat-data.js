@@ -49,7 +49,7 @@ function gtk_sat_data_init_sat(sat) {
 	var sat_geodetic = new geodetic_t();
 	var jul_utc, age;
 
-	jul_utc = Julian_Date_of_Epoch(sat.tle.epoch); // => tsince = 0.0
+	jul_utc = julian_date_of_Epoch(sat.tle.epoch); // => tsince = 0.0
 	sat.jul_epoch = jul_utc;
 
 	/* execute computations */
