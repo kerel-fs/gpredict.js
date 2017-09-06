@@ -1,5 +1,6 @@
 {
   "name": "gpredict.js",
+  "version": "1.0.0",
   "description": "A js-fork of gpredict: a free, real-time satellite tracking and orbit prediction software.",
   "keywords": [
     "satellite",
@@ -10,6 +11,10 @@
   ],
   "license": "GPL-2.0+",
   "homepage": "",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kerel-fs/gpredict.js.git"
+  },
   "devDependencies": {
     "gulp": "3.9",
     "gulp-concat": "2.6",
