@@ -813,7 +813,6 @@ function Deep(ientry, sat) {
 		cc = c1ss;
 		zn = zns;
 		ze = zes;
-		zmo = sat.dps.zmos;
 		xnoi = 1.0 / sat.dps.xnq;
 
 		for (;;) {
@@ -912,7 +911,6 @@ function Deep(ientry, sat) {
 			zn = znl;
 			cc = c1l;
 			ze = zel;
-			zmo = sat.dps.zmol;
 			sat.flags |= LUNAR_TERMS_DONE_FLAG;
 		}
 
@@ -1073,7 +1071,7 @@ function Deep(ientry, sat) {
 		sat.deep_arg.omgadf = sat.deep_arg.omgadf + sat.dps.ssg
 				* sat.deep_arg.t;
 		sat.deep_arg.xnode = sat.deep_arg.xnode + sat.dps.ssh * sat.deep_arg.t;
-		sat.deep_arg.em = sat.tle.eo + sat.dps.sse * sat.deep_arg.t;
+		sat.deep_arg.em = parseFloat(sat.tle.eo) + sat.dps.sse * sat.deep_arg.t;
 		sat.deep_arg.xinc = sat.tle.xincl + sat.dps.ssi * sat.deep_arg.t;
 		if (sat.deep_arg.xinc < 0) {
 			sat.deep_arg.xinc = -sat.deep_arg.xinc;
