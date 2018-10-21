@@ -1,3 +1,4 @@
+/* exported asin */
 var sin = Math.sin;
 var cos = Math.cos;
 var sqrt = Math.sqrt;
