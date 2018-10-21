@@ -1,3 +1,4 @@
+/* exported isFlagSet isFlagClear ORBIT_TYPE_LEO ORBIT_TYPE_ICO ORBIT_TYPE_GSO ORBIT_TYPE_MOLNIYA ORBIT_TYPE_TUNDRA ORBIT_TYPE_POLAR ORBIT_TYPE_SUNSYNC OP_STAT_OPERATIONAL OP_STAT_NONOP OP_STAT_PARTIAL OP_STAT_STDBY OP_STAT_SPARE OP_STAT_EXTENDED */
 
 /** Type definitions **/
 
@@ -192,13 +193,10 @@ function Sat_t() {
 var de2ra    =1.74532925E-2;   /* Degrees to Radians */
 var pi       =3.1415926535898; /* Pi */
 var pio2     =1.5707963267949; /* Pi/2 */
-var x3pio2   =4.71238898;      /* 3*Pi/2 */
 var twopi    =6.2831853071796; /* 2*Pi  */
 var e6a      =1.0E-6;
 var tothrd   =6.6666667E-1;    /* 2/3 */
-var xj2      =1.0826158E-3;    /* J2 Harmonic */
 var xj3      =-2.53881E-6;      /* J3 Harmonic */   
-var xj4      =-1.65597E-6;      /* J4 Harmonic */
 var xke      =7.43669161E-2;
 var xkmper   =6.378135E3;      /* Earth radius km */
 var xmnpda   =1.44E3;          /* Minutes per day */
@@ -206,12 +204,10 @@ var ae       =1.0;
 var ck2      =5.413079E-4;
 var ck4      =6.209887E-7;
 var __f      =3.352779E-3;
-var ge       =3.986008E5; 
 var __s__    =1.012229;
 var qoms2t   =1.880279E-09;
 var secday   =8.6400E4;        /* Seconds per day */
 var omega_E  =1.0027379;
-var omega_ER =6.3003879;
 var zns      =1.19459E-5;
 var c1ss     =2.9864797E-6;
 var zes      =1.675E-2;
@@ -222,8 +218,6 @@ var zcosis   =9.1744867E-1;
 var zsinis   =3.9785416E-1;
 var zsings   =-9.8088458E-1;
 var zcosgs   =1.945905E-1;
-var zcoshs   =1;
-var zsinhs   =0;
 var q22      =1.7891679E-6;
 var q31      =2.1460748E-6;
 var q33      =2.2123015E-7;
@@ -238,10 +232,7 @@ var root44   =7.3636953E-9;
 var root52   =1.1428639E-7;
 var root54   =2.1765803E-9;
 var thdt     =4.3752691E-3;
-var rho      =1.5696615E-1;
 var mfactor  =7.292115E-5;
-var __sr__   =6.96000E5;      /*Solar radius - kilometers (IAU 76)*/
-var AU       =1.49597870E8;   /*Astronomical unit - kilometers (IAU 76)*/
 
 /* Entry points of Deep() 
 FIXME: Change to enu */
@@ -249,27 +240,17 @@ var dpinit   =1; /* Deep-space initialization code */
 var dpsec    =2; /* Deep-space secular code        */
 var dpper    =3; /* Deep-space periodic code       */
 
-/* Carriage return and line feed */
-var CR  =0x0A;
-var LF  =0x0D;
-
 /* Flow control flag definitions */
-var ALL_FLAGS              =-1;
-var SGP_INITIALIZED_FLAG   =0x000001;
 var SGP4_INITIALIZED_FLAG  =0x000002;
 var SDP4_INITIALIZED_FLAG  =0x000004;
-var SGP8_INITIALIZED_FLAG  =0x000008;
-var SDP8_INITIALIZED_FLAG  =0x000010;
 var SIMPLE_FLAG            =0x000020;
 var DEEP_SPACE_EPHEM_FLAG  =0x000040;
 var LUNAR_TERMS_DONE_FLAG  =0x000080;
-var NEW_EPHEMERIS_FLAG     =0x000100;
 var DO_LOOP_FLAG           =0x000200;
 var RESONANCE_FLAG         =0x000400;
 var SYNCHRONOUS_FLAG       =0x000800;
 var EPOCH_RESTART_FLAG     =0x001000;
 var VISIBLE_FLAG           =0x002000;
-var SAT_ECLIPSED_FLAG      =0x004000;
 
 
 /* SGP4 */

@@ -5,5 +5,4 @@ var floor = Math.floor;
 var pow = Math.pow;
 var fabs = Math.abs;
 var acos = Math.acos;
-var asin = Math.asin;
 var atan = Math.atan;

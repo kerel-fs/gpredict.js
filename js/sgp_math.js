@@ -1,3 +1,4 @@
+/* exported Sign Cube radians arccos Vec_Add Vec_Sub Scalar_Multiply Angle Cross Normalize
 /*
  * Unit SGP_Math
  *       Author:  Dr TS Kelso

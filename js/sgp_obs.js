@@ -1,4 +1,4 @@
-
+/* exported Calculate_RADec_and_Obs */
 /* Procedure Calculate_User_PosVel passes the user's geodetic position */
 /* and the time of interest and returns the ECI position and velocity  */
 /* of the observer. The velocity calculation assumes the geodetic      */

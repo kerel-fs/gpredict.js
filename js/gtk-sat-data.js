@@ -1,4 +1,4 @@
-
+/* exported gtk_sat_data_read_sat */
 /** \brief Read TLE data for a given satellite into memory.
  *  \param catnum The catalog number of the satellite.
  *  \param sat Pointer to a valid Sat_t structure.

@@ -1,3 +1,4 @@
+/* exported Sat_t get_next_passes */
 /*
     Gpredict: Real-time satellite tracking and orbit prediction program
 
@@ -24,6 +25,11 @@
     You should have received a copy of the GNU General Public License
     along with this program; if not, visit http://www.fsf.org/
 */
+
+/* FIXME here are some preferences that should be fetched from somewhere else */
+const SAT_CFG_INT_PRED_RESOLUTION = 10
+const SAT_CFG_INT_PRED_NUM_ENTRIES = 10
+const SAT_CFG_INT_PRED_MIN_EL = 0
 
 /**
  * Satellite pass info default constructor.
@@ -417,7 +423,6 @@ function get_pass(sat, qth, start, maxdt, pass)
     var max_el = 0.0; /* maximum elevation */
     var detail;
     var done = false;
-    var iter = 0;      /* number of iterations */
     /* FIXME: watchdog */
 
     /* get time resolution; sat-cfg stores it in seconds */
@@ -544,7 +549,6 @@ function get_pass(sat, qth, start, maxdt, pass)
                 pass = null;
             }
 
-            iter++;
         }
     }
 

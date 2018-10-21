@@ -5,8 +5,8 @@ var uglify = require('gulp-uglify');
 var concat = require('gulp-concat');
 
 // Lint JS
-gulp.task('lint:js', function() {
-  return gulp.src('js/*.js')
+gulp.task('lint:js',['concat:js'], function() {
+  return gulp.src('dist/gpredict.js')
     .pipe(eslint())
     .pipe(eslint.format())
     .pipe(eslint.failAfterError());

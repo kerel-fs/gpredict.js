@@ -1,3 +1,4 @@
+/* exported Delta_ET Date_Time Time_of_Day Epoch_Time Calendar_Date */
 /*
  * Unit SGP_Time
  *       Author:  Dr TS Kelso
@@ -44,6 +45,8 @@ function julian_date_of_Epoch(epoch) {
 /*------------------------------------------------------------------*/
 
 /* Converts a Julian epoch to NORAD TLE epoch format */
+
+/* FIXME no idea where tm() comes from
 function Epoch_Time(jd) {
 	var yr, _time, epoch_time;
 	var edate = new tm();
@@ -58,7 +61,7 @@ function Epoch_Time(jd) {
 
 	return (epoch_time);
 }
-
+*/
 /*------------------------------------------------------------------*/
 
 /* The function DOY calculates the day of the year for the specified */
