@@ -1,7 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>PhoneSat</title>
+    <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+    <meta content="utf-8" http-equiv="encoding">
+
+	<title>gpredict.js - Example</title>
 	<link href="phonesat.css" rel="stylesheet" type="text/css"/>
 	<link href="http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700" rel="stylesheet" type="text/css"/>
 
@@ -15,39 +18,8 @@
 
 <script src="https://unpkg.com/leaflet@0.7.7/dist/leaflet.js"></script>
 <script type="text/javascript" src="../dist/gpredict.min.js"></script>
-<script>
-    // Default ground station
-    qth = new qth_t();
-    qth.lat=0;
-    qth.lon=0;
-    qth.alt=0;
-    
-    // Number of positions to compute
-    var COUNT = 300;
-    
-    // Interval in ms between positions to compute
-    var STEP = 60*1000;
-    
-    var SAT_CFG_INT_PRED_RESOLUTION = 10;
-    var SAT_CFG_INT_PRED_NUM_ENTRIES = 20;
-    var SAT_CFG_INT_PRED_MIN_EL = 5;
-    // Color saturation between 0 and 1
-    var SAT_CFG_COLOR_SATURATION = 0.7;
-    // Color value between 0 and 255
-    var SAT_CFG_COLOR_VALUE = 255;
-    
-    var SATELLITES = [
-    	// FUNCUBE-1 (AO-73)
-    	{
-    		id: 39444
-    	},
-    	// ISS
-    	{
-    		id: 25544,
-    		freq: 437.1
-    	}
-    ];
-
+<script type="text/javascript" src="minimal.js"></script>
+<script type="text/javascript">
 // Create the map
 var map = L.map(
 		'map',
@@ -76,32 +48,43 @@ layers_control.addTo(map);
 // Init satellites
 var sats = [];
 
-function parseTLE() {
-	// The TLE file has been downloaded from NORAD
-	// Convert the HTML page to a plain text
-	var re = /^[^]*<PRE>\n([^]*)<\/PRE>[^]*$/;
-	var tle = JSON.parse(this.responseText).body.replace(re, "$1").split('\n');
+// Default ground station
+qth = new qth_t();
+qth.lat=0;
+qth.lon=0;
+qth.alt=0;
+
+// Number of positions to compute
+var COUNT = 300;
+
+// Interval in ms between positions to compute
+var STEP = 60*1000;
+
+var SATELLITES = [{id: 25544,
+		           freq: 437.1,
+                   tle: ['ISS',
+                         '1 25544U 98067A   18300.24318025  .00001410  00000-0  28792-4 0  9995',
+                         '2 25544  51.6403  80.6450 0004088 342.1993  74.5258 15.53867767139059']},
+                  {id: 28628,
+                   tle: ['INMARSAT 4-F1',
+                         '1 28628U 05009A   18299.55629977 -.00000257  00000-0  00000+0 0  9993',
+                         '2 28628   2.9417  19.0021 0003300 209.0333 150.6619  1.00271647 49694']}];
+
+SATELLITES.forEach(function(satellite, index, array) {
 	// Construct a new satellite
-	var sat = new sat_t();
+	var sat = new Sat_t();
+
 	// Load its orbit data from TLE
-	gtk_sat_data_read_sat(tle, sat);
+	gtk_sat_data_read_sat(satellite.tle, sat);
 	// Set its color
 	sat.color = 'rgb(255,0,0)';
 
 	sat.mapInit(map);
+
 	// Save it to the list
 	sats.push(sat);
-}
-
-SATELLITES.forEach(function(currentValue, index, array) {
-	var myRequest = new XMLHttpRequest();
-	myRequest.addEventListener('load', parseTLE);
-	myRequest.open("GET", "http://cors-proxy.htmldriven.com/?url=http://celestrak.com/cgi-bin/TLE.pl?CATNR=" + currentValue.id);
-	myRequest.send();
 });
 
 // Start timer
 window.setInterval("refresh()", 1000);
-
 </script>
-<script type="text/javascript" src="minimal.js"></script>

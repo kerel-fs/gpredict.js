@@ -18,26 +18,28 @@
  */
 "use strict";
 
-
+//function satellite_t(){}
 // ////////////////////////////////////////////////////
 // Latitude and longitude orbit plot on the earth map
 // ////////////////////////////////////////////////////
 
-sat_t.prototype.mapInit = function(map) {
+Sat_t.prototype.mapInit = function(map) {
 
 	this.mapSvg = document.getElementById('map');
 	if (!this.mapSvg) {
 		return;
 	}
 
+	predict_calc(this, qth, julian_date(new Date()));
+
 	// Create satellite dot
 	this.mapDot = L.circleMarker(
-			[0,0],
+			[this.ssplat, this.ssplon],
 			{
 				radius: 6,
 				stroke: false,
 				fill: true,
-				fillColor: this.color,
+				fillColor: 'rgb(0,0,0)',
 				fillOpacity: 1,
 
 			}
@@ -63,7 +65,7 @@ sat_t.prototype.mapInit = function(map) {
 		var g = "";
 		var previous = 0;
 		for ( var i = 0; i < COUNT; i++) {
-			predict_calc(this, qth, Julian_Date(t));
+			predict_calc(this, qth, julian_date(t));
 			if (Math.abs(this.ssplon - previous) > 180) {
 				// orbit crossing -PI, PI
 				all_orbits.push(current_orbit);
@@ -90,7 +92,7 @@ sat_t.prototype.mapInit = function(map) {
 	}
 };
 
-sat_t.prototype.mapRefresh = function() {
+Sat_t.prototype.mapRefresh = function() {
 	if (!this.mapSvg) {
 		return;
 	}
@@ -105,15 +107,15 @@ sat_t.prototype.mapRefresh = function() {
 		var ssplat, ssplon, beta, azimuth, num, dem;
 		//var rangelon, rangelat, mlon;
 
-		var geo = new geodetic_t();
+		var geo = new Geodetic_t();
 
 		/* Range circle calculations.
 		 * Borrowed from gsat 0.9.0 by Xavier Crehueras, EB3CZS
 		 * who borrowed from John Magliacane, KD2BD.
 		 * Optimized by Alexandru Csete and William J Beksi.
 		 */
-		ssplat = Radians(this.ssplat);
-		ssplon = Radians(this.ssplon);
+		ssplat = radians(this.ssplat);
+		ssplon = radians(this.ssplon);
 		beta = (0.5 * this.footprint) / xkmper;
 
 		var gn = "", gp = "", g = "";
@@ -144,7 +146,7 @@ sat_t.prototype.mapRefresh = function() {
 					geo.lon = ssplon + arccos(num, dem);
 			}
 
-			points.push([Degrees(geo.lat), Degrees(geo.lon)]);
+			points.push([degrees(geo.lat), degrees(geo.lon)]);
 		}
 
 		this.mapFootprint.setLatLngs(points);
@@ -156,7 +158,7 @@ sat_t.prototype.mapRefresh = function() {
 // ////////////////////////////////////////////////////////////////
 
 function refresh() {
-	var jt = Julian_Date(new Date());
+	var jt = julian_date(new Date());
 
 	// Compute current satellites longitude and latitude
 	for (var i = 0; i < sats.length; i++) {
@@ -164,7 +166,3 @@ function refresh() {
 		sats[i].mapRefresh();
 	}
 }
-
-var sat_name = document.getElementById("sat_name");
-var sat_az = document.getElementById("sat_az");
-var sat_el = document.getElementById("sat_el");
