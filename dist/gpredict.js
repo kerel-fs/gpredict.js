@@ -140,6 +140,7 @@ function select_ephemeris(sat) {
 	}
 }
 
+/* exported isFlagSet isFlagClear ORBIT_TYPE_LEO ORBIT_TYPE_ICO ORBIT_TYPE_GSO ORBIT_TYPE_MOLNIYA ORBIT_TYPE_TUNDRA ORBIT_TYPE_POLAR ORBIT_TYPE_SUNSYNC OP_STAT_OPERATIONAL OP_STAT_NONOP OP_STAT_PARTIAL OP_STAT_STDBY OP_STAT_SPARE OP_STAT_EXTENDED */
 
 /** Type definitions **/
 
@@ -334,13 +335,10 @@ function Sat_t() {
 var de2ra    =1.74532925E-2;   /* Degrees to Radians */
 var pi       =3.1415926535898; /* Pi */
 var pio2     =1.5707963267949; /* Pi/2 */
-var x3pio2   =4.71238898;      /* 3*Pi/2 */
 var twopi    =6.2831853071796; /* 2*Pi  */
 var e6a      =1.0E-6;
 var tothrd   =6.6666667E-1;    /* 2/3 */
-var xj2      =1.0826158E-3;    /* J2 Harmonic */
 var xj3      =-2.53881E-6;      /* J3 Harmonic */   
-var xj4      =-1.65597E-6;      /* J4 Harmonic */
 var xke      =7.43669161E-2;
 var xkmper   =6.378135E3;      /* Earth radius km */
 var xmnpda   =1.44E3;          /* Minutes per day */
@@ -348,12 +346,10 @@ var ae       =1.0;
 var ck2      =5.413079E-4;
 var ck4      =6.209887E-7;
 var __f      =3.352779E-3;
-var ge       =3.986008E5; 
 var __s__    =1.012229;
 var qoms2t   =1.880279E-09;
 var secday   =8.6400E4;        /* Seconds per day */
 var omega_E  =1.0027379;
-var omega_ER =6.3003879;
 var zns      =1.19459E-5;
 var c1ss     =2.9864797E-6;
 var zes      =1.675E-2;
@@ -364,8 +360,6 @@ var zcosis   =9.1744867E-1;
 var zsinis   =3.9785416E-1;
 var zsings   =-9.8088458E-1;
 var zcosgs   =1.945905E-1;
-var zcoshs   =1;
-var zsinhs   =0;
 var q22      =1.7891679E-6;
 var q31      =2.1460748E-6;
 var q33      =2.2123015E-7;
@@ -380,10 +374,7 @@ var root44   =7.3636953E-9;
 var root52   =1.1428639E-7;
 var root54   =2.1765803E-9;
 var thdt     =4.3752691E-3;
-var rho      =1.5696615E-1;
 var mfactor  =7.292115E-5;
-var __sr__   =6.96000E5;      /*Solar radius - kilometers (IAU 76)*/
-var AU       =1.49597870E8;   /*Astronomical unit - kilometers (IAU 76)*/
 
 /* Entry points of Deep() 
 FIXME: Change to enu */
@@ -391,27 +382,17 @@ var dpinit   =1; /* Deep-space initialization code */
 var dpsec    =2; /* Deep-space secular code        */
 var dpper    =3; /* Deep-space periodic code       */
 
-/* Carriage return and line feed */
-var CR  =0x0A;
-var LF  =0x0D;
-
 /* Flow control flag definitions */
-var ALL_FLAGS              =-1;
-var SGP_INITIALIZED_FLAG   =0x000001;
 var SGP4_INITIALIZED_FLAG  =0x000002;
 var SDP4_INITIALIZED_FLAG  =0x000004;
-var SGP8_INITIALIZED_FLAG  =0x000008;
-var SDP8_INITIALIZED_FLAG  =0x000010;
 var SIMPLE_FLAG            =0x000020;
 var DEEP_SPACE_EPHEM_FLAG  =0x000040;
 var LUNAR_TERMS_DONE_FLAG  =0x000080;
-var NEW_EPHEMERIS_FLAG     =0x000100;
 var DO_LOOP_FLAG           =0x000200;
 var RESONANCE_FLAG         =0x000400;
 var SYNCHRONOUS_FLAG       =0x000800;
 var EPOCH_RESTART_FLAG     =0x001000;
 var VISIBLE_FLAG           =0x002000;
-var SAT_ECLIPSED_FLAG      =0x004000;
 
 
 /* SGP4 */
@@ -955,7 +936,6 @@ function Deep(ientry, sat) {
 		cc = c1ss;
 		zn = zns;
 		ze = zes;
-		zmo = sat.dps.zmos;
 		xnoi = 1.0 / sat.dps.xnq;
 
 		for (;;) {
@@ -1054,7 +1034,6 @@ function Deep(ientry, sat) {
 			zn = znl;
 			cc = c1l;
 			ze = zel;
-			zmo = sat.dps.zmol;
 			sat.flags |= LUNAR_TERMS_DONE_FLAG;
 		}
 
@@ -1215,7 +1194,7 @@ function Deep(ientry, sat) {
 		sat.deep_arg.omgadf = sat.deep_arg.omgadf + sat.dps.ssg
 				* sat.deep_arg.t;
 		sat.deep_arg.xnode = sat.deep_arg.xnode + sat.dps.ssh * sat.deep_arg.t;
-		sat.deep_arg.em = sat.tle.eo + sat.dps.sse * sat.deep_arg.t;
+		sat.deep_arg.em = parseFloat(sat.tle.eo) + sat.dps.sse * sat.deep_arg.t;
 		sat.deep_arg.xinc = sat.tle.xincl + sat.dps.ssi * sat.deep_arg.t;
 		if (sat.deep_arg.xinc < 0) {
 			sat.deep_arg.xinc = -sat.deep_arg.xinc;
@@ -1436,6 +1415,7 @@ function ClearFlag(flag) {
 
 // //////////////////////////////////////////////////////////////////////////////
 
+/* exported Sat_t get_next_passes */
 /*
     Gpredict: Real-time satellite tracking and orbit prediction program
 
@@ -1462,6 +1442,11 @@ function ClearFlag(flag) {
     You should have received a copy of the GNU General Public License
     along with this program; if not, visit http://www.fsf.org/
 */
+
+/* FIXME here are some preferences that should be fetched from somewhere else */
+const SAT_CFG_INT_PRED_RESOLUTION = 10
+const SAT_CFG_INT_PRED_NUM_ENTRIES = 10
+const SAT_CFG_INT_PRED_MIN_EL = 0
 
 /**
  * Satellite pass info default constructor.
@@ -1855,7 +1840,6 @@ function get_pass(sat, qth, start, maxdt, pass)
     var max_el = 0.0; /* maximum elevation */
     var detail;
     var done = false;
-    var iter = 0;      /* number of iterations */
     /* FIXME: watchdog */
 
     /* get time resolution; sat-cfg stores it in seconds */
@@ -1982,7 +1966,6 @@ function get_pass(sat, qth, start, maxdt, pass)
                 pass = null;
             }
 
-            iter++;
         }
     }
 
@@ -2053,6 +2036,7 @@ function get_passes (sat, qth, start, maxdt, num)
     return passes;
 }
 
+/* exported Delta_ET Date_Time Time_of_Day Epoch_Time Calendar_Date */
 /*
  * Unit SGP_Time
  *       Author:  Dr TS Kelso
@@ -2099,6 +2083,8 @@ function julian_date_of_Epoch(epoch) {
 /*------------------------------------------------------------------*/
 
 /* Converts a Julian epoch to NORAD TLE epoch format */
+
+/* FIXME no idea where tm() comes from
 function Epoch_Time(jd) {
 	var yr, _time, epoch_time;
 	var edate = new tm();
@@ -2113,7 +2099,7 @@ function Epoch_Time(jd) {
 
 	return (epoch_time);
 }
-
+*/
 /*------------------------------------------------------------------*/
 
 /* The function DOY calculates the day of the year for the specified */
@@ -2395,7 +2381,7 @@ UTC_Calendar_Now( struct tm *cdate )
 } /* End UTC_Calendar_Now */
 /*------------------------------------------------------------------*/
 
-
+/* exported Calculate_RADec_and_Obs */
 /* Procedure Calculate_User_PosVel passes the user's geodetic position */
 /* and the time of interest and returns the ECI position and velocity  */
 /* of the observer. The velocity calculation assumes the geodetic      */
@@ -2558,6 +2544,7 @@ function Calculate_RADec_and_Obs(_time, pos, vel, geodetic, obs_set) {
 	obs_set.ra = FMod2p(obs_set.ra);
 }
 
+/* exported asin */
 var sin = Math.sin;
 var cos = Math.cos;
 var sqrt = Math.sqrt;
@@ -2568,7 +2555,7 @@ var acos = Math.acos;
 var asin = Math.asin;
 var atan = Math.atan;
 
-
+/* exported gtk_sat_data_read_sat */
 /** \brief Read TLE data for a given satellite into memory.
  *  \param catnum The catalog number of the satellite.
  *  \param sat Pointer to a valid Sat_t structure.
@@ -2657,7 +2644,7 @@ function gtk_sat_data_init_sat(sat) {
 	sat.otype = get_orbit_type(sat);
 }
 
-
+/* exported qth_t */
 /**
  * QTH data structure in human readable form.
  * @returns {qth_t}
@@ -2667,8 +2654,9 @@ function qth_t() {
      this.lat = 0.0;   /*!< Latitude in dec. deg. North. */
      this.lon = 0.0;   /*!< Longitude in dec. deg. East. */
      this.alt = 0;     /*!< Altitude above sea level in meters. */
-};
+}
 
+/* exported Sign Cube radians arccos Vec_Add Vec_Sub Scalar_Multiply Angle Cross Normalize
 /*
  * Unit SGP_Math
  *       Author:  Dr TS Kelso
